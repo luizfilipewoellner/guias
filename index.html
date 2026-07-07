@@ -288,7 +288,7 @@ button{
 
   <div class="footer-actions">
     <button class="btn-clear" id="clearBtn" type="button">Limpar tudo</button>
-    <button class="btn-primary" id="printBtn" type="button">Imprimir direto</button>
+    <button class="btn-add" id="printBtn" type="button">Imprimir</button>
     <button class="btn-primary" id="genBtn" type="button">Gerar guia em PDF</button>
   </div>
   <div class="status" id="status"></div>
@@ -423,14 +423,15 @@ function fmtDate(iso){
   return `${d}/${m}/${y}`;
 }
 
-function wrapText(text, maxCharsPerLine){
+function wrapTextByWidth(text, font, size, maxWidth){
   if(!text) return [];
   const words = text.split(' ');
   const lines = [];
   let cur = '';
   words.forEach(w=>{
     const test = cur ? cur + ' ' + w : w;
-    if(test.length > maxCharsPerLine){
+    const width = font.widthOfTextAtSize(test, size);
+    if(width > maxWidth){
       if(cur) lines.push(cur);
       cur = w;
     } else {
@@ -527,7 +528,7 @@ async function buildPdfBytes(){
     putComb(393.6, 13.19, 1, 339, v('f26'), 6.5);
     putComb(488.9, 13.07, 1, 339, v('f27'), 6.5);
 
-    const indicacaoLines = wrapText(v('f28'), 100);
+    const indicacaoLines = wrapTextByWidth(v('f28'), font, 8, 525);
     indicacaoLines.slice(0,8).forEach((line,i)=>{
       put(34, 365 + i*12, line, 8);
     });
